@@ -1,27 +1,29 @@
 #Find all source files in a directory.
-aux_source_directory(./ ${PROJECT_NAME}_src_list)
+set(LIB_NAME_EMPTY "${PROJECT_NAME}")
+message(STATUS "LIB_NAME: ${LIB_NAME_EMPTY}")
 
-if(${PROJECT_NAME}_src_list)
-    message(STATUS "【${PROJECT_NAME}】: ${${PROJECT_NAME}_src_list}")
+aux_source_directory(./ ${LIB_NAME_EMPTY}_src_list)
+
+if(${LIB_NAME_EMPTY}_src_list)
+    message(STATUS "【${LIB_NAME_EMPTY}】: ${${LIB_NAME_EMPTY}_src_list}")
+
+    #Static library
+    if(BUILD_STATIC_LIBRARY)
+        message(STATUS "STATIC ${LIB_NAME_EMPTY}")
+        add_library(${LIB_NAME_EMPTY}_a STATIC ${${LIB_NAME_EMPTY}_src_list})
+        set_target_properties(${LIB_NAME_EMPTY}_a PROPERTIES OUTPUT_NAME "${LIB_NAME_EMPTY}")
+        install(TARGETS ${LIB_NAME_EMPTY}_a DESTINATION lib)
+    endif()
+
+    #Shared library
+    if(BUILD_SHARED_LIBRARY)
+        message(STATUS "SHARED ${LIB_NAME_EMPTY}")
+        add_library(${LIB_NAME_EMPTY}_so SHARED ${${LIB_NAME_EMPTY}_src_list})
+        set_target_properties(${LIB_NAME_EMPTY}_so PROPERTIES OUTPUT_NAME "${LIB_NAME_EMPTY}")
+        set_target_properties(${LIB_NAME_EMPTY}_so PROPERTIES VERSION ${${LIB_NAME_EMPTY}_VERSION} SOVERSION ${${LIB_NAME_EMPTY}_VERSION_MAJOR})
+        install(TARGETS ${LIB_NAME_EMPTY}_so DESTINATION lib)
+    endif()
 else()
-    message(STATUS "【${PROJECT_NAME}】 not has src")
-    return()
-endif()
-
-#Static library
-if(BUILD_STATIC_LIBRARY)
-    message(STATUS "STATIC ${PROJECT_NAME}")
-    add_library(${PROJECT_NAME}_a STATIC ${${PROJECT_NAME}_src_list})
-    set_target_properties(${PROJECT_NAME}_a PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
-    install(TARGETS ${PROJECT_NAME}_a DESTINATION lib)
-endif()
-
-#Shared library
-if(BUILD_SHARED_LIBRARY)
-    message(STATUS "SHARED ${PROJECT_NAME}")
-    add_library(${PROJECT_NAME}_so SHARED ${${PROJECT_NAME}_src_list})
-    set_target_properties(${PROJECT_NAME}_so PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
-    set_target_properties(${PROJECT_NAME}_so PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_VERSION_MAJOR})
-    install(TARGETS ${PROJECT_NAME}_so DESTINATION lib)
+    message(STATUS "【${LIB_NAME_EMPTY}】 not has src")
 endif()
 
